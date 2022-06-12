@@ -238,11 +238,11 @@ begin
   while (i < 5) do
   begin
     if (i <= CompetitionList.Count) then
-      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<th>@' +
-        CompetitionList.Name[i] + '<th>' +
+      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@' +
+        CompetitionList.Name[i] + '<td>' +
         CompetitionList.Value[i] + '</tr>')
     else
-      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<th>@<th>0.000</tr>');
+      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@<td>0.000</tr>');
     inc(i);
   end;
   Memo1.Append('</table>');

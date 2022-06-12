@@ -89,12 +89,13 @@ type
     CompetitionList: TCompetitionList;
     DataAltered: boolean;
     saveFileName: string;
+
     function ShowCentredModal(const form: TForm): integer;
     procedure displayHTMLtable;
     function saveFile: boolean;
     function loadFile: boolean;
   public
-
+     EntryCount: integer;
   end;
 
 var
@@ -235,14 +236,14 @@ begin
   Memo1.Append('<table>');
   Memo1.Append('<tr><th>Rank<th>Participant<th>Result</tr>');
   i := 0;
-  while (i < 5) do
+  while (i < EntryCount) do
   begin
     if (i <= CompetitionList.Count) then
       Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@' +
         CompetitionList.Name[i] + '<td>' +
-        CompetitionList.Value[i] + '</tr>')
+        CompetitionList.Value[i] + ' kWh</tr>')
     else
-      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@<td>0.000</tr>');
+      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@<td>0.000 kWh</tr>');
     inc(i);
   end;
   Memo1.Append('</table>');
@@ -303,7 +304,14 @@ end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
 begin
+  SettingsForm.DoSave := false;
+  SettingsForm.Edit1.Text := inttostr(EntryCount);
   ShowCentredModal(SettingsForm);
+  if SettingsForm.DoSave then
+  begin
+    EntryCount := strtointDef(SettingsForm.Edit1.Text,5);
+    displayHTMLtable;
+  end;
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -328,7 +336,7 @@ end;
 
 procedure TForm1.Edit2KeyPress(Sender: TObject; var Key: char);
 begin
-  if Key in ['0'..'9', DefaultFormatSettings.DecimalSeparator, #9, #8] then
+  if Key in ['0'..'9', DefaultFormatSettings.DecimalSeparator, #9, #8, '-'] then
   else Key := #0;
 end;
 
@@ -346,6 +354,7 @@ begin
   CompetitionList := TCompetitionList.Create;
   SaveFileName := 'default.csv';
   DataAltered := false;
+  EntryCount := 5;
 end;
 
 end.

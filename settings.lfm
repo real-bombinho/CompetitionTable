@@ -1,7 +1,7 @@
 object Form3: TForm3
-  Left = 1016
+  Left = 1176
   Height = 250
-  Top = 265
+  Top = 375
   Width = 310
   BorderStyle = bsToolWindow
   Caption = 'Settings'
@@ -14,6 +14,7 @@ object Form3: TForm3
     Top = 208
     Width = 77
     Caption = 'Save'
+    OnClick = Button1Click
     TabOrder = 0
   end
   object Button2: TButton
@@ -21,8 +22,24 @@ object Form3: TForm3
     Height = 24
     Top = 208
     Width = 77
-    Caption = 'Exit'
+    Caption = 'Cancel'
     OnClick = Button2Click
     TabOrder = 1
+  end
+  object Label1: TLabel
+    Left = 33
+    Height = 17
+    Top = 41
+    Width = 76
+    Caption = 'Entry count'
+    ParentColor = False
+  end
+  object Edit1: TEdit
+    Left = 144
+    Height = 27
+    Top = 41
+    Width = 39
+    NumbersOnly = True
+    TabOrder = 2
   end
 end

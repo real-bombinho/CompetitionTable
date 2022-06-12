@@ -1,0 +1,134 @@
+object Form1: TForm1
+  Left = 677
+  Height = 441
+  Top = 286
+  Width = 900
+  Caption = 'Power Hour Competition'
+  ClientHeight = 418
+  ClientWidth = 900
+  Menu = MainMenu1
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  LCLVersion = '2.0.10.0'
+  object StringGrid1: TStringGrid
+    Left = 51
+    Height = 299
+    Top = 53
+    Width = 389
+    ColCount = 3
+    Columns = <    
+      item
+        Title.Caption = 'Name'
+        Width = 250
+      end    
+      item
+        Title.Caption = 'Result'
+      end>
+    RowCount = 6
+    ScrollBars = ssVertical
+    TabOrder = 0
+  end
+  object Edit1: TEdit
+    Left = 104
+    Height = 27
+    Top = 368
+    Width = 208
+    TabOrder = 1
+  end
+  object Label1: TLabel
+    Left = 51
+    Height = 17
+    Top = 373
+    Width = 40
+    Caption = 'Name'
+    ParentColor = False
+  end
+  object Edit2: TEdit
+    Left = 381
+    Height = 27
+    Top = 368
+    Width = 67
+    OnKeyPress = Edit2KeyPress
+    TabOrder = 2
+  end
+  object Label2: TLabel
+    Left = 328
+    Height = 17
+    Top = 373
+    Width = 42
+    Caption = 'Result'
+    ParentColor = False
+  end
+  object Button1: TButton
+    Left = 464
+    Height = 27
+    Top = 368
+    Width = 40
+    Caption = 'Add'
+    OnClick = Button1Click
+    TabOrder = 3
+  end
+  object Memo1: TMemo
+    Left = 472
+    Height = 299
+    Top = 53
+    Width = 376
+    TabOrder = 4
+  end
+  object Label3: TLabel
+    Left = 56
+    Height = 17
+    Top = 24
+    Width = 120
+    Caption = 'Participant table'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label4: TLabel
+    Left = 480
+    Height = 17
+    Top = 24
+    Width = 121
+    Caption = 'HTML table code'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object MainMenu1: TMainMenu
+    object MenuItem4: TMenuItem
+      Caption = 'File'
+      object MenuItem7: TMenuItem
+        Caption = 'Open'
+        OnClick = MenuItem7Click
+      end
+      object MenuItem5: TMenuItem
+        Caption = 'Save'
+        OnClick = MenuItem5Click
+      end
+      object MenuItem6: TMenuItem
+        Caption = 'SaveAs'
+        OnClick = MenuItem6Click
+      end
+    end
+    object MenuItem1: TMenuItem
+      Caption = 'General'
+      object MenuItem2: TMenuItem
+        Caption = 'Settings'
+        OnClick = MenuItem2Click
+      end
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'About'
+      OnClick = MenuItem3Click
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Filter = 'CSV|*.csv|TXT|*.txt|All|*.*'
+    left = 80
+  end
+  object SaveDialog1: TSaveDialog
+    Filter = 'CSV|*.csv|TXT|*.txt|All|*.*'
+    left = 168
+  end
+end

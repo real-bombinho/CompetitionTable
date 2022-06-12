@@ -1,0 +1,28 @@
+object Form3: TForm3
+  Left = 1016
+  Height = 250
+  Top = 265
+  Width = 310
+  BorderStyle = bsToolWindow
+  Caption = 'Settings'
+  ClientHeight = 250
+  ClientWidth = 310
+  LCLVersion = '2.0.10.0'
+  object Button1: TButton
+    Left = 112
+    Height = 24
+    Top = 208
+    Width = 77
+    Caption = 'Save'
+    TabOrder = 0
+  end
+  object Button2: TButton
+    Left = 213
+    Height = 24
+    Top = 208
+    Width = 77
+    Caption = 'Exit'
+    OnClick = Button2Click
+    TabOrder = 1
+  end
+end

@@ -208,7 +208,6 @@ begin
 end;
 
 procedure TForm1.MenuItem7Click(Sender: TObject);
-var f: textFile;
 begin
   if OpenDialog1.Execute then
   begin
@@ -253,7 +252,7 @@ function TForm1.saveFile: boolean;
 var i: integer;
     f: TextFile;
 begin
-  //if fileExists(SaveFileName) then
+  result := false;
   begin
     AssignFile(f, SaveFileName);
     try
@@ -262,11 +261,13 @@ begin
       writeln(f, CompetitionList.Name[i] + ',' + CompetitionList.Value[i]);
       CloseFile(f);
       DataAltered := false;
+      result := true;
     except
       on E: EInOutError do
         writeln('File handling error occurred. Details: ', E.ClassName, '/', E.Message);
     end;
   end;
+  if not fileExists(SaveFileName) then result := false;
 end;
 
 function TForm1.loadFile: boolean;
@@ -275,6 +276,7 @@ var i: integer;
     s: string;
     p: integer;
 begin
+  result := false;
   AssignFile(f, SaveFileName);
   try
     Reset(f);
@@ -291,6 +293,7 @@ begin
       inc(i);
     end;
     CloseFile(f);
+    result := true;
   except
     on E: EInOutError do
     writeln('File handling error occurred. Details: ', E.ClassName, '/', E.Message);

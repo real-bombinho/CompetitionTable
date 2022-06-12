@@ -49,9 +49,11 @@ type
   public
     function Add(const Name: string; const value: single): boolean;
     function Count: integer;
+    function SumTop(const cnt: integer): string;
     procedure Clear;
     property Name[index: integer] : string read getName;
     property Value[index: integer]: string read getValue;
+
   end;
 
   { TForm1 }
@@ -125,6 +127,16 @@ end;
 function TCompetitionList.Count: integer;
 begin
   result := length(entries);
+end;
+
+function TCompetitionList.SumTop(const cnt: integer): string;
+var i: integer;
+    r: single;
+begin
+  r := 0;
+  for i := 0 to count - 1 do
+    if i < length(entries) then r := r + entries[i].value;
+  result := floatToStrF(r, ffFixed, 3, 3);
 end;
 
 procedure TCompetitionList.Clear;
@@ -246,6 +258,8 @@ begin
       Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@<td>0.000 kWh</tr>');
     inc(i);
   end;
+  Memo1.Append('<tr><th><th>TOTAL Top' + inttostr(EntryCount) + '<th>' +
+    CompetitionList.SumTop(EntryCount) + ' kWh</tr>');
   Memo1.Append('</table>');
 end;
 

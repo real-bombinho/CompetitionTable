@@ -134,7 +134,7 @@ var i: integer;
     r: single;
 begin
   r := 0;
-  for i := 0 to count - 1 do
+  for i := 0 to cnt - 1 do
     if i < length(entries) then r := r + entries[i].value;
   result := floatToStrF(r, ffFixed, 3, 3);
 end;

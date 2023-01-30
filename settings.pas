@@ -36,14 +36,20 @@ type
   TForm3 = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    ComboBox1: TComboBox;
     Edit1: TEdit;
     Label1: TLabel;
+    Label2: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
   private
+    function getPrecision: integer;
+    function getUnits: string;
 
   public
     DoSave: boolean;
+    property Units: string read getUnits;
+    property Precision: integer read getPrecision;
   end;
 
 var
@@ -53,12 +59,28 @@ implementation
 
 {$R *.lfm}
 
+const
+  unitPrecision: array[0..1] of integer = (0, 3);
+
+
 { TForm3 }
 
 procedure TForm3.Button2Click(Sender: TObject);
 begin
   DoSave := false;
   Close;
+end;
+
+function TForm3.getPrecision: integer;
+begin
+  if comboBox1.ItemIndex = -1 then
+    raise exception.Create('no unit selected');
+  result := unitPrecision[comboBox1.ItemIndex]
+end;
+
+function TForm3.getUnits: string;
+begin
+  result := ' ' + comboBox1.Text + '</tr>';
 end;
 
 procedure TForm3.Button1Click(Sender: TObject);

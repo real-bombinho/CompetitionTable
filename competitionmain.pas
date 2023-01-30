@@ -42,8 +42,10 @@ type
   TCompetitionList = class
   private
     entries: array of TEntry;
+    Fprecision: integer;
     function getName(index: integer): string;
     function getValue(index: integer): string;
+    procedure Setprecision(AValue: integer);
     procedure sort;
     function isExisting(const name: string): boolean;
   public
@@ -51,9 +53,9 @@ type
     function Count: integer;
     function SumTop(const cnt: integer): string;
     procedure Clear;
+    property Precision: integer read Fprecision write Setprecision;
     property Name[index: integer] : string read getName;
     property Value[index: integer]: string read getValue;
-
   end;
 
   { TForm1 }
@@ -136,7 +138,7 @@ begin
   r := 0;
   for i := 0 to cnt - 1 do
     if i < length(entries) then r := r + entries[i].value;
-  result := floatToStrF(r, ffFixed, 3, 3);
+  result := floatToStrF(r, ffFixed, 3, FPrecision);
 end;
 
 procedure TCompetitionList.Clear;
@@ -178,7 +180,13 @@ end;
 
 function TCompetitionList.getValue(index: integer): string;
 begin
-  result := floatToStrF(entries[index].value, ffFixed, 3, 3);
+  result := floatToStrF(entries[index].value, ffFixed, 3, FPrecision);
+end;
+
+procedure TCompetitionList.Setprecision(AValue: integer);
+begin
+  if Fprecision = AValue then Exit;
+  Fprecision := AValue;
 end;
 
 function TCompetitionList.isExisting(const name: string): boolean;
@@ -243,23 +251,28 @@ end;
 
 procedure TForm1.displayHTMLtable;
 var i: integer;
+    zs: string;
 begin
+  case SettingsForm.precision of
+    0: zs := '0';
+    3: zs := '0.000';
+  end;
   Memo1.Clear;
   Memo1.Append('<table>');
   Memo1.Append('<tr><th>Rank<th>Participant<th>Result</tr>');
   i := 0;
   while (i < EntryCount) do
   begin
-    if (i <= CompetitionList.Count) then
+    if (i <= CompetitionList.Count -1) then
       Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@' +
         CompetitionList.Name[i] + '<td>' +
-        CompetitionList.Value[i] + ' kWh</tr>')
+        CompetitionList.Value[i] + SettingsForm.units)
     else
-      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@<td>0.000 kWh</tr>');
+      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@<td>' + zs + SettingsForm.units);
     inc(i);
   end;
   Memo1.Append('<tr><th><th>TOTAL Top' + inttostr(EntryCount) + '<th>' +
-    CompetitionList.SumTop(EntryCount) + ' kWh</tr>');
+    CompetitionList.SumTop(EntryCount) + SettingsForm.units);
   Memo1.Append('</table>');
 end;
 
@@ -324,6 +337,7 @@ begin
   if SettingsForm.DoSave then
   begin
     EntryCount := strtointDef(SettingsForm.Edit1.Text,5);
+    competitionList.Precision := SettingsForm.Precision;
     displayHTMLtable;
   end;
 end;

@@ -1,13 +1,13 @@
 object Form3: TForm3
-  Left = 1176
+  Left = 144
   Height = 250
-  Top = 375
+  Top = 367
   Width = 310
   BorderStyle = bsToolWindow
   Caption = 'Settings'
   ClientHeight = 250
   ClientWidth = 310
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.4.0'
   object Button1: TButton
     Left = 112
     Height = 24
@@ -29,7 +29,7 @@ object Form3: TForm3
   object Label1: TLabel
     Left = 33
     Height = 17
-    Top = 41
+    Top = 88
     Width = 76
     Caption = 'Entry count'
     ParentColor = False
@@ -37,9 +37,31 @@ object Form3: TForm3
   object Edit1: TEdit
     Left = 144
     Height = 27
-    Top = 41
+    Top = 88
     Width = 39
     NumbersOnly = True
     TabOrder = 2
+  end
+  object ComboBox1: TComboBox
+    Left = 142
+    Height = 29
+    Top = 32
+    Width = 148
+    ItemHeight = 0
+    ItemIndex = 0
+    Items.Strings = (
+      'points'
+      'kWh'
+    )
+    TabOrder = 3
+    Text = 'points'
+  end
+  object Label2: TLabel
+    Left = 33
+    Height = 17
+    Top = 40
+    Width = 84
+    Caption = 'League units'
+    ParentColor = False
   end
 end

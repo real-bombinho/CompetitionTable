@@ -9,7 +9,7 @@ object Form1: TForm1
   Menu = MainMenu1
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.4.0'
   object StringGrid1: TStringGrid
     Left = 51
     Height = 299
@@ -125,10 +125,10 @@ object Form1: TForm1
   end
   object OpenDialog1: TOpenDialog
     Filter = 'CSV|*.csv|TXT|*.txt|All|*.*'
-    left = 80
+    Left = 80
   end
   object SaveDialog1: TSaveDialog
     Filter = 'CSV|*.csv|TXT|*.txt|All|*.*'
-    left = 168
+    Left = 168
   end
 end

@@ -84,6 +84,7 @@ type
     procedure Edit2KeyPress(Sender: TObject; var Key: char);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
@@ -315,6 +316,8 @@ begin
       readln(f, s);
       p := pos(',', s);
       CompetitionList.Add(copy(s, 1, p - 1), strtofloatDef(copy(s, p + 1, 7), NaN) );
+      if StringGrid1.RowCount < (i + 1) then
+        StringGrid1.RowCount := i + 1;
       StringGrid1.Cells[0, i] := inttostr(i) + '.';
       StringGrid1.Cells[1, i] := CompetitionList.Name[i - 1];
       StringGrid1.Cells[2, i] := CompetitionList.Value[i - 1];
@@ -383,6 +386,17 @@ begin
   SaveFileName := 'default.csv';
   DataAltered := false;
   EntryCount := 5;
+end;
+
+procedure TForm1.FormResize(Sender: TObject);
+begin
+  Label1.Top := Height - 68;
+  Label2.Top := Height - 68;
+  Edit1.Top := Height - 73;
+  Edit2.Top := Height - 73;
+  Button1.Top := Height - 73;
+  StringGrid1.Height := Height - 142;
+  Memo1.Height := Height - 142;
 end;
 
 end.

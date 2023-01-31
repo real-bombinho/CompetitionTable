@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 677
+  Left = 729
   Height = 441
-  Top = 286
+  Top = 502
   Width = 900
   Caption = 'Power Hour Competition'
   ClientHeight = 418
@@ -9,6 +9,7 @@ object Form1: TForm1
   Menu = MainMenu1
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnResize = FormResize
   LCLVersion = '2.2.4.0'
   object StringGrid1: TStringGrid
     Left = 51

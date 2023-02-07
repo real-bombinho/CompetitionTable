@@ -31,25 +31,32 @@ uses
 
 type
 
+  TTableStyle = (tsHTML, tsText);
+
   { TForm3 }   // orphaned stub only at the moment
 
   TForm3 = class(TForm)
     Button1: TButton;
     Button2: TButton;
     ComboBox1: TComboBox;
+    ComboBox2: TComboBox;
     Edit1: TEdit;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
   private
     function getPrecision: integer;
+    function getStyle: TTableStyle;
     function getUnits: string;
+    procedure SetStyle(AValue: TTableStyle);
 
   public
     DoSave: boolean;
     property Units: string read getUnits;
     property Precision: integer read getPrecision;
+    property Style: TTableStyle read getStyle write setStyle;
   end;
 
 var
@@ -78,9 +85,29 @@ begin
   result := unitPrecision[comboBox1.ItemIndex]
 end;
 
+function TForm3.getStyle: TTableStyle;
+begin
+  case ComboBox2.ItemIndex of
+    0: result := tsHTML;
+    1: result := tsText;
+  end;
+end;
+
 function TForm3.getUnits: string;
 begin
-  result := ' ' + comboBox1.Text + '</tr>';
+  case ComboBox2.ItemIndex of
+    0: result := ' ' + comboBox1.Text + '</tr>';
+    1: result := ' ' + comboBox1.Text + '|';
+  end;
+end;
+
+
+procedure TForm3.SetStyle(AValue: TTableStyle);
+begin
+  case AValue of
+    tsHTML: comboBox2.ItemIndex := 0;
+    tsText: comboBox2.ItemIndex := 1;
+  end;
 end;
 
 procedure TForm3.Button1Click(Sender: TObject);

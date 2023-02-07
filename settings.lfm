@@ -1,7 +1,7 @@
 object Form3: TForm3
-  Left = 144
+  Left = 163
   Height = 250
-  Top = 367
+  Top = 230
   Width = 310
   BorderStyle = bsToolWindow
   Caption = 'Settings'
@@ -35,7 +35,7 @@ object Form3: TForm3
     ParentColor = False
   end
   object Edit1: TEdit
-    Left = 144
+    Left = 142
     Height = 27
     Top = 88
     Width = 39
@@ -63,5 +63,27 @@ object Form3: TForm3
     Width = 84
     Caption = 'League units'
     ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 33
+    Height = 17
+    Top = 141
+    Width = 71
+    Caption = 'Table style'
+    ParentColor = False
+  end
+  object ComboBox2: TComboBox
+    Left = 142
+    Height = 29
+    Top = 140
+    Width = 109
+    ItemHeight = 0
+    ItemIndex = 0
+    Items.Strings = (
+      'HTML'
+      'Text'
+    )
+    TabOrder = 4
+    Text = 'HTML'
   end
 end

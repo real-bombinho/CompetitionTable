@@ -97,6 +97,7 @@ type
 
     function ShowCentredModal(const form: TForm): integer;
     procedure displayHTMLtable;
+    procedure displayTextTable;
     function saveFile: boolean;
     function loadFile: boolean;
   public
@@ -277,6 +278,32 @@ begin
   Memo1.Append('</table>');
 end;
 
+procedure TForm1.displayTextTable;
+var i: integer;
+    zs: string;
+begin
+  case SettingsForm.precision of
+    0: zs := '0';
+    3: zs := '0.000';
+  end;
+  Memo1.Clear;
+  Memo1.Append('|Rank|Participant|Result|');
+  Memo1.Append('| --- | --- | --- |');
+  i := 0;
+  while (i < EntryCount) do
+  begin
+    if (i <= CompetitionList.Count -1) then
+      Memo1.Append('|' + inttostr(i + 1) + '.|@' +
+        CompetitionList.Name[i] + '|' +
+        CompetitionList.Value[i] + SettingsForm.units)
+    else
+      Memo1.Append('|' + inttostr(i + 1) + '.| @ |' + zs + SettingsForm.units);
+    inc(i);
+  end;
+  Memo1.Append('||TOTAL Top' + inttostr(EntryCount) + '|' +
+    CompetitionList.SumTop(EntryCount) + SettingsForm.units);
+end;
+
 function TForm1.saveFile: boolean;
 var i: integer;
     f: TextFile;
@@ -341,7 +368,10 @@ begin
   begin
     EntryCount := strtointDef(SettingsForm.Edit1.Text,5);
     competitionList.Precision := SettingsForm.Precision;
-    displayHTMLtable;
+    case SettingsForm.Style of
+      TTableStyle.tsHTML: displayHTMLTable;
+      TTableStyle.tsText: displayTextTable;
+    end;
   end;
 end;
 

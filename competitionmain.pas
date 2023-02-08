@@ -77,6 +77,7 @@ type
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
     StringGrid1: TStringGrid;
@@ -90,18 +91,22 @@ type
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
+    procedure MenuItemNewClick(Sender: TObject);
   private
     CompetitionList: TCompetitionList;
-    DataAltered: boolean;
+    FDataAltered: boolean;
+    FCaption: string;
     saveFileName: string;
-
+    procedure SetDataAltered(AValue: boolean);
     function ShowCentredModal(const form: TForm): integer;
-    procedure displayHTMLtable;
-    procedure displayTextTable;
+    procedure displayTable;
+    procedure displayHTMLtable(const zeroString: string);
+    procedure displayTextTable(const zeroString: string);
     function saveFile: boolean;
     function loadFile: boolean;
   public
      EntryCount: integer;
+     property DataAltered: boolean read FDataAltered write SetDataAltered;
   end;
 
 var
@@ -244,6 +249,16 @@ begin
   end;
 end;
 
+procedure TForm1.MenuItemNewClick(Sender: TObject);
+begin
+  saveFileName := '';
+  StringGrid1.Clear;
+  StringGrid1.RowCount := 6;
+  CompetitionList.Clear;
+  displayTable;
+  dataAltered := false;
+end;
+
 function TForm1.ShowCentredModal(const form: TForm): integer;
 begin
   form.Left := OctopusForm.Left + (OctopusForm.Width div 2) - (form.Width div 2);
@@ -251,15 +266,39 @@ begin
   result := form.ShowModal;
 end;
 
-procedure TForm1.displayHTMLtable;
-var i: integer;
-    zs: string;
+procedure TForm1.SetDataAltered(AValue: boolean);
 begin
+  if FDataAltered = AValue then Exit;
+  FDataAltered := AValue;
+  if FDataAltered then
+  begin
+    if pos(' *', Caption) = 0 then
+      Caption := FCaption + ' *';
+  end
+  else
+  begin
+    if pos(' *', Caption) <> (length(Caption) - 2) then
+      Caption := FCaption;
+  end;
+end;
+
+procedure TForm1.displayTable;
+var zs: string;
+begin
+  Memo1.Clear;
   case SettingsForm.precision of
     0: zs := '0';
     3: zs := '0.000';
   end;
-  Memo1.Clear;
+  case SettingsForm.Style of
+    TTableStyle.tsHTML: displayHTMLTable(zs);
+    TTableStyle.tsText: displayTextTable(zs);
+  end;
+end;
+
+procedure TForm1.displayHTMLtable(const zeroString: string);
+var i: integer;
+begin
   Memo1.Append('<table>');
   Memo1.Append('<tr><th>Rank<th>Participant<th>Result</tr>');
   i := 0;
@@ -268,25 +307,20 @@ begin
     if (i <= CompetitionList.Count -1) then
       Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@' +
         CompetitionList.Name[i] + '<td>' +
-        CompetitionList.Value[i] + SettingsForm.units)
+        CompetitionList.Value[i] + SettingsForm.units + '</tr>')
     else
-      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@<td>' + zs + SettingsForm.units);
+      Memo1.Append('<tr><td>' + inttostr(i + 1) + '.<td>@<td>' + zeroString +
+        SettingsForm.units + '</tr>');
     inc(i);
   end;
   Memo1.Append('<tr><th><th>TOTAL Top' + inttostr(EntryCount) + '<th>' +
-    CompetitionList.SumTop(EntryCount) + SettingsForm.units);
+    CompetitionList.SumTop(EntryCount) + SettingsForm.units + '</tr>');
   Memo1.Append('</table>');
 end;
 
-procedure TForm1.displayTextTable;
+procedure TForm1.displayTextTable(const zeroString: string);
 var i: integer;
-    zs: string;
 begin
-  case SettingsForm.precision of
-    0: zs := '0';
-    3: zs := '0.000';
-  end;
-  Memo1.Clear;
   Memo1.Append('|Rank|Participant|Result|');
   Memo1.Append('| --- | --- | --- |');
   i := 0;
@@ -295,13 +329,14 @@ begin
     if (i <= CompetitionList.Count -1) then
       Memo1.Append('|' + inttostr(i + 1) + '.|@' +
         CompetitionList.Name[i] + '|' +
-        CompetitionList.Value[i] + SettingsForm.units)
+        CompetitionList.Value[i] + SettingsForm.units + '|')
     else
-      Memo1.Append('|' + inttostr(i + 1) + '.| @ |' + zs + SettingsForm.units);
+      Memo1.Append('|' + inttostr(i + 1) + '.| @ |' + zeroString +
+        SettingsForm.units + '|');
     inc(i);
   end;
   Memo1.Append('||TOTAL Top' + inttostr(EntryCount) + '|' +
-    CompetitionList.SumTop(EntryCount) + SettingsForm.units);
+    CompetitionList.SumTop(EntryCount) + SettingsForm.units + '|');
 end;
 
 function TForm1.saveFile: boolean;
@@ -356,7 +391,7 @@ begin
     on E: EInOutError do
     writeln('File handling error occurred. Details: ', E.ClassName, '/', E.Message);
   end;
-  displayHTMLtable;
+  displayTable;
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
@@ -368,10 +403,7 @@ begin
   begin
     EntryCount := strtointDef(SettingsForm.Edit1.Text,5);
     competitionList.Precision := SettingsForm.Precision;
-    case SettingsForm.Style of
-      TTableStyle.tsHTML: displayHTMLTable;
-      TTableStyle.tsText: displayTextTable;
-    end;
+    displayTable;
   end;
 end;
 
@@ -390,7 +422,7 @@ begin
       StringGrid1.Cells[1, i] := CompetitionList.Name[i - 1];
       StringGrid1.Cells[2, i] := CompetitionList.Value[i - 1];
     end;
-    displayHTMLtable;
+    displayTable;
     DataAltered := true;
   end;
 end;
@@ -416,6 +448,7 @@ begin
   SaveFileName := 'default.csv';
   DataAltered := false;
   EntryCount := 5;
+  FCaption := Caption;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);

@@ -1,10 +1,10 @@
 object Form1: TForm1
   Left = 729
-  Height = 441
+  Height = 438
   Top = 502
   Width = 900
   Caption = 'Power Hour Competition'
-  ClientHeight = 418
+  ClientHeight = 415
   ClientWidth = 900
   Menu = MainMenu1
   OnCloseQuery = FormCloseQuery
@@ -99,6 +99,10 @@ object Form1: TForm1
   object MainMenu1: TMainMenu
     object MenuItem4: TMenuItem
       Caption = 'File'
+      object MenuItem8: TMenuItem
+        Caption = 'New'
+        OnClick = MenuItemNewClick
+      end
       object MenuItem7: TMenuItem
         Caption = 'Open'
         OnClick = MenuItem7Click

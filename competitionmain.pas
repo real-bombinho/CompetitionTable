@@ -45,6 +45,9 @@ type
     Fprecision: integer;
     function getName(index: integer): string;
     function getValue(index: integer): string;
+    function setValue(index: integer; AValue: single): boolean;
+    function setValue(index: integer; AValue: string): boolean;
+    procedure setName(index: integer; AValue: string);
     procedure Setprecision(AValue: integer);
     procedure sort;
     function isExisting(const name: string): boolean;
@@ -54,9 +57,26 @@ type
     function SumTop(const cnt: integer): string;
     procedure Clear;
     property Precision: integer read Fprecision write Setprecision;
-    property Name[index: integer] : string read getName;
+    property Name[index: integer] : string read getName write setName;
     property Value[index: integer]: string read getValue;
   end;
+
+  { TCompetitionListGrid }
+
+  TCompetitionListGrid = class(TCompetitionList)
+  private
+    FPoint: TPoint;
+    FStringGrid: TStringGrid;
+    FOnEdit: TNotifyEvent;
+    procedure Refresh;
+  public
+    procedure FStringGridBeforeSelection(Sender: TObject; aCol, aRow: Integer);
+    procedure FStringGridEditingDone(Sender: TObject);
+    function Add(const AName: string; const AValue: single): boolean;
+    property OnEdit: TNotifyEvent read FOnEdit write FOnEdit;
+    constructor Create(AGrid: TStringGrid);
+  end;
+
 
   { TForm1 }
 
@@ -93,10 +113,11 @@ type
     procedure MenuItem7Click(Sender: TObject);
     procedure MenuItemNewClick(Sender: TObject);
   private
-    CompetitionList: TCompetitionList;
+    CompetitionList: TCompetitionListGrid;
     FDataAltered: boolean;
     FCaption: string;
     saveFileName: string;
+    procedure GridEdited(Sender: TObject);
     procedure SetDataAltered(AValue: boolean);
     function ShowCentredModal(const form: TForm): integer;
     procedure displayTable;
@@ -115,6 +136,92 @@ var
 implementation
 
 {$R *.lfm}
+
+{ TCompetitionListGrid }
+
+procedure TCompetitionListGrid.Refresh;
+var i: integer;
+begin
+  for i := 1 to Count do
+  begin
+    FStringGrid.Cells[0, i] := inttostr(i)+'.';
+    FStringGrid.Cells[1, i] := Name[i - 1];
+    FStringGrid.Cells[2, i] := Value[i - 1];
+  end;
+  //showmessage('refresh');
+end;
+
+procedure TCompetitionListGrid.FStringGridBeforeSelection(Sender: TObject;
+  aCol, aRow: Integer);
+begin
+  FPoint.X := aCol;
+  FPoint.Y := aRow;
+  if (aCol = 0) or (aRow = 0) or (aRow > Count + 1) then
+    FStringGrid.Options := [goFixedVertLine,goFixedHorzLine,goVertLine,goHorzLine,goRangeSelect,goSmoothScroll]
+  else
+    FStringGrid.Options := [goFixedVertLine,goFixedHorzLine,goVertLine,goHorzLine,goRangeSelect,goSmoothScroll,goEditing]
+end;
+
+procedure TCompetitionListGrid.FStringGridEditingDone(Sender: TObject);
+var f: single;
+begin
+  if FPoint.Y = Count + 1 then                    // added entry
+  begin
+    if (FStringGrid.Cells[1, FPoint.Y] <> '') and
+      (FStringGrid.Cells[2, FPoint.Y] <> '') then
+    begin
+      f := strtofloatDef(FStringGrid.Cells[2, FPoint.Y], NaN);
+      if not IsNaN(f) then
+        if Add(FStringGrid.Cells[1, FPoint.Y], f) then
+        begin
+          refresh;
+          if assigned(FOnEdit) then
+            FOnEdit(FStringGrid);
+        end;
+    end;
+    exit;
+  end;
+  if (FPoint.X = 1) and (count >= FPoint.Y) then  // edited Name
+  begin
+    if (FStringGrid.Cells[1, FPoint.Y] = Name[FPoint.Y - 1]) then
+      exit;
+    Name[FPoint.Y - 1] := FStringGrid.Cells[1, FPoint.Y];
+    if assigned(FOnEdit) then
+      FOnEdit(FStringGrid);
+    exit;
+  end;
+  if (FPoint.X = 2) and (count >= FPoint.Y) then  // edited number
+  begin
+    if (FStringGrid.Cells[1, FPoint.Y] = Value[FPoint.Y - 1]) then
+      exit;
+    setValue(FPoint.Y - 1, FStringGrid.Cells[2, FPoint.Y]);
+    Refresh;
+    if assigned(FOnEdit) then
+      FOnEdit(FStringGrid);
+  end;
+end;
+
+function TCompetitionListGrid.Add(const AName: string; const AValue: single
+  ): boolean;
+begin
+  result := inherited Add(AName, AValue);
+  if result then
+  begin
+    if Count > 5 then
+      FStringGrid.RowCount := Count + 1;
+    refresh;
+  end;
+end;
+
+
+constructor TCompetitionListGrid.Create(AGrid: TStringGrid);
+begin
+  inherited Create;
+  if AGrid = nil then exception.Create('TStringGrid not initialised - fail');
+  FStringGrid := AGrid;
+  FStringGrid.OnBeforeSelection := @FStringGridBeforeSelection;
+  FStringGrid.OnEditingDone := @FStringGridEditingDone;
+end;
 
 { TCompetitionList }
 
@@ -190,6 +297,32 @@ begin
   result := floatToStrF(entries[index].value, ffFixed, 3, FPrecision);
 end;
 
+function TCompetitionList.setValue(index: integer; AValue: single): boolean;
+begin
+  if (Index > high(entries)) and (index < low(entries)) then
+  begin
+    result := false;
+    raise exception.Create('SetValue: Index (entries) - Out of bounds');
+  end;
+  entries[index].value := AValue;
+  sort;
+  result := true;
+end;
+
+function TCompetitionList.setValue(index: integer; AValue: string): boolean;
+var f: float;
+begin
+  result := false;
+  f := strtofloatDef(AValue, NaN);
+  if not IsNaN(f) then
+    result := setValue(index, f);
+end;
+
+procedure TCompetitionList.setName(index: integer; AValue: string);
+begin
+  entries[index].name := AValue;
+end;
+
 procedure TCompetitionList.Setprecision(AValue: integer);
 begin
   if Fprecision = AValue then Exit;
@@ -213,7 +346,7 @@ end;
 
 procedure TForm1.MenuItem3Click(Sender: TObject);
 begin
-  ShowCentredModal(AboutForm);
+  ShowCentredModal(AboutForm1);
 end;
 
 procedure TForm1.MenuItem5Click(Sender: TObject);
@@ -259,6 +392,12 @@ begin
   dataAltered := false;
 end;
 
+procedure TForm1.GridEdited(Sender: TObject);
+begin
+  SetDataAltered(true);
+  displayTable;
+end;
+
 function TForm1.ShowCentredModal(const form: TForm): integer;
 begin
   form.Left := OctopusForm.Left + (OctopusForm.Width div 2) - (form.Width div 2);
@@ -286,6 +425,7 @@ procedure TForm1.displayTable;
 var zs: string;
 begin
   Memo1.Clear;
+  zs :='';
   case SettingsForm.precision of
     0: zs := '0';
     3: zs := '0.000';
@@ -408,20 +548,11 @@ begin
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
-var i: integer;
-    f: single;
+var f: single;
 begin
   f := strtofloatDef(Edit2.Text, NaN);
   if CompetitionList.Add(Edit1.Text, f) then
   begin
-    if CompetitionList.Count > 5 then
-      StringGrid1.RowCount := CompetitionList.Count + 1;
-    for i := 1 to CompetitionList.Count do
-    begin
-      StringGrid1.Cells[0, i] := inttostr(i)+'.';
-      StringGrid1.Cells[1, i] := CompetitionList.Name[i - 1];
-      StringGrid1.Cells[2, i] := CompetitionList.Value[i - 1];
-    end;
     displayTable;
     DataAltered := true;
   end;
@@ -444,7 +575,8 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  CompetitionList := TCompetitionList.Create;
+  CompetitionList := TCompetitionListGrid.Create(StringGrid1);
+  CompetitionList.OnEdit := @GridEdited;
   SaveFileName := 'default.csv';
   DataAltered := false;
   EntryCount := 5;
@@ -463,4 +595,3 @@ begin
 end;
 
 end.
-

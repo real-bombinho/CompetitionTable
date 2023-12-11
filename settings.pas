@@ -95,7 +95,10 @@ end;
 
 function TForm3.getUnits: string;
 begin
-  result := ' ' + comboBox1.Text;
+  case ComboBox2.ItemIndex of
+    0: result := ' ' + comboBox1.Text; // + '</tr>';
+    1: result := ' ' + comboBox1.Text; // + '|';
+  end;
 end;
 
 

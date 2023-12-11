@@ -43,6 +43,7 @@ type
   private
     entries: array of TEntry;
     Fprecision: integer;
+    FOnAltered: TNotifyEvent;
     function getName(index: integer): string;
     function getValue(index: integer): string;
     function setValue(index: integer; AValue: single): boolean;
@@ -50,7 +51,7 @@ type
     procedure setName(index: integer; AValue: string);
     procedure Setprecision(AValue: integer);
     procedure sort;
-    function isExisting(const name: string): boolean;
+    function isExisting(const name: string; const caseSensitive: boolean = false): boolean;
   public
     function Add(const Name: string; const value: single): boolean;
     function Count: integer;
@@ -59,6 +60,8 @@ type
     property Precision: integer read Fprecision write Setprecision;
     property Name[index: integer] : string read getName write setName;
     property Value[index: integer]: string read getValue;
+    property OnAltered: TNotifyEvent read FOnAltered write FOnAltered;
+    constructor Create;
   end;
 
   { TCompetitionListGrid }
@@ -81,6 +84,9 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+  const
+    cCaption = 'Power Hour Competition    ';
+  var
     Button1: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
@@ -118,7 +124,7 @@ type
     FCaption: string;
     saveFileName: string;
     procedure GridEdited(Sender: TObject);
-    procedure SetDataAltered(AValue: boolean);
+    procedure SetDataAltered(const AValue: boolean; const force: boolean = false);
     function ShowCentredModal(const form: TForm): integer;
     procedure displayTable;
     procedure displayHTMLtable(const zeroString: string);
@@ -235,6 +241,8 @@ begin
     entries[i].value := value;
     entries[i].name := Name;
     sort;
+    if assigned(FOnAltered) then
+      FOnAltered(self);
     result := true;
   end
   else result := false;
@@ -256,6 +264,15 @@ begin
 end;
 
 procedure TCompetitionList.Clear;
+var c: integer;
+begin
+  c := length(entries);
+  setLength(entries, 0);
+  if assigned(FOnAltered) and (c <> 0) then
+    FOnAltered(self);
+end;
+
+constructor TCompetitionList.Create;
 begin
   setLength(entries, 0);
 end;
@@ -304,8 +321,13 @@ begin
     result := false;
     raise exception.Create('SetValue: Index (entries) - Out of bounds');
   end;
-  entries[index].value := AValue;
-  sort;
+  if entries[index].value <> AValue then
+  begin
+    entries[index].value := AValue;
+    sort;
+    if assigned(FOnAltered) then
+      FOnAltered(self);
+  end;
   result := true;
 end;
 
@@ -320,7 +342,12 @@ end;
 
 procedure TCompetitionList.setName(index: integer; AValue: string);
 begin
-  entries[index].name := AValue;
+  if entries[index].name <> AValue then
+  begin
+    entries[index].name := AValue;
+    if assigned(FOnAltered) then
+      FOnAltered(self);
+  end;
 end;
 
 procedure TCompetitionList.Setprecision(AValue: integer);
@@ -329,17 +356,29 @@ begin
   Fprecision := AValue;
 end;
 
-function TCompetitionList.isExisting(const name: string): boolean;
+function TCompetitionList.isExisting(const name: string; const caseSensitive: boolean): boolean;
 var i: integer;
 begin
   result := false;
   if length(entries) < 1 then exit;
-  for i := 0 to length(entries) - 1 do
-    if uppercase(entries[i].name) = uppercase(name) then
-    begin
-      result := true;
-      break;
-    end;
+  if caseSensitive then
+  begin
+    for i := 0 to length(entries) - 1 do
+      if entries[i].name = name then
+      begin
+        result := true;
+        break;
+      end;
+  end
+  else
+  begin
+    for i := 0 to length(entries) - 1 do
+      if uppercase(entries[i].name) = uppercase(name) then
+      begin
+        result := true;
+        break;
+      end;
+  end;
 end;
 
 { TForm1 }
@@ -389,7 +428,7 @@ begin
   StringGrid1.RowCount := 6;
   CompetitionList.Clear;
   displayTable;
-  dataAltered := false;
+  SetDataAltered(false);
 end;
 
 procedure TForm1.GridEdited(Sender: TObject);
@@ -405,20 +444,17 @@ begin
   result := form.ShowModal;
 end;
 
-procedure TForm1.SetDataAltered(AValue: boolean);
+procedure TForm1.SetDataAltered(const AValue: boolean; const force: boolean);
+var s: string;
 begin
-  if FDataAltered = AValue then Exit;
+  if not force then
+    if FDataAltered = AValue then Exit;
   FDataAltered := AValue;
   if FDataAltered then
-  begin
-    if pos(' *', Caption) = 0 then
-      Caption := FCaption + ' *';
-  end
+    s := '* '
   else
-  begin
-    if pos(' *', Caption) <> (length(Caption) - 2) then
-      Caption := FCaption;
-  end;
+    s := '';
+  Caption := cCaption + s + ExtractFilename(SaveFileName);
 end;
 
 procedure TForm1.displayTable;
@@ -491,7 +527,7 @@ begin
       for i := 0 to CompetitionList.Count - 1 do
       writeln(f, CompetitionList.Name[i] + ',' + CompetitionList.Value[i]);
       CloseFile(f);
-      DataAltered := false;
+      SetDataAltered(false);
       result := true;
     except
       on E: EInOutError do
@@ -526,6 +562,7 @@ begin
       inc(i);
     end;
     CloseFile(f);
+    SetDataAltered(false, true);
     result := true;
   except
     on E: EInOutError do
@@ -554,7 +591,7 @@ begin
   if CompetitionList.Add(Edit1.Text, f) then
   begin
     displayTable;
-    DataAltered := true;
+    setDataAltered(true);
   end;
 end;
 
@@ -578,7 +615,8 @@ begin
   CompetitionList := TCompetitionListGrid.Create(StringGrid1);
   CompetitionList.OnEdit := @GridEdited;
   SaveFileName := 'default.csv';
-  DataAltered := false;
+  Caption := cCaption;
+  SetDataAltered(false);
   EntryCount := 5;
   FCaption := Caption;
 end;

@@ -1,22 +1,18 @@
-object Form2: TForm2
-  Left = 1234
-  Height = 250
-  Hint = 'About Octopus'
-  Top = 624
+object AboutForm1: TAboutForm1
+  Left = 333
+  Height = 240
+  Top = 33
   Width = 320
-  Align = alClient
   BorderStyle = bsToolWindow
   Caption = 'About'
-  ClientHeight = 250
+  ClientHeight = 240
   ClientWidth = 320
-  FormStyle = fsStayOnTop
-  OnCreate = FormCreate
-  LCLVersion = '2.2.4.0'
+  DesignTimePPI = 120
   object Label1: TLabel
     Left = 29
-    Height = 17
+    Height = 20
     Top = 24
-    Width = 145
+    Width = 142
     Caption = 'Octopus Competition'
     ParentColor = False
   end
@@ -31,15 +27,15 @@ object Form2: TForm2
   end
   object Label2: TLabel
     Left = 29
-    Height = 17
-    Top = 152
-    Width = 187
-    Caption = 'Copyright @bombinho 2022'
+    Height = 20
+    Top = 160
+    Width = 226
+    Caption = 'Copyright @bombinho 2022-2023'
     ParentColor = False
   end
   object Memo1: TMemo
     Left = 29
-    Height = 72
+    Height = 88
     Top = 64
     Width = 259
     BorderStyle = bsNone

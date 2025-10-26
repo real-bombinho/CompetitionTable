@@ -1,18 +1,21 @@
-object AboutForm1: TAboutForm1
-  Left = 333
-  Height = 240
-  Top = 33
+object Form2: TForm2
+  Left = 1234
+  Height = 250
+  Hint = 'About Octopus'
+  Top = 624
   Width = 320
+  Align = alClient
   BorderStyle = bsToolWindow
   Caption = 'About'
-  ClientHeight = 240
+  ClientHeight = 250
   ClientWidth = 320
-  DesignTimePPI = 120
+  FormStyle = fsStayOnTop
+  OnCreate = FormCreate
   object Label1: TLabel
     Left = 29
-    Height = 20
+    Height = 17
     Top = 24
-    Width = 142
+    Width = 144
     Caption = 'Octopus Competition'
     ParentColor = False
   end
@@ -22,20 +25,20 @@ object AboutForm1: TAboutForm1
     Top = 200
     Width = 87
     Caption = 'OK'
-    OnClick = Button1Click
     TabOrder = 0
+    OnClick = Button1Click
   end
   object Label2: TLabel
     Left = 29
-    Height = 20
-    Top = 160
-    Width = 226
-    Caption = 'Copyright @bombinho 2022-2023'
+    Height = 17
+    Top = 152
+    Width = 223
+    Caption = 'Copyright @bombinho 2022-2025'
     ParentColor = False
   end
   object Memo1: TMemo
     Left = 29
-    Height = 88
+    Height = 72
     Top = 64
     Width = 259
     BorderStyle = bsNone

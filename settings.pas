@@ -87,6 +87,7 @@ end;
 
 function TForm3.getStyle: TTableStyle;
 begin
+  result := tsText;
   case ComboBox2.ItemIndex of
     0: result := tsHTML;
     1: result := tsText;
@@ -95,10 +96,7 @@ end;
 
 function TForm3.getUnits: string;
 begin
-  case ComboBox2.ItemIndex of
-    0: result := ' ' + comboBox1.Text; // + '</tr>';
-    1: result := ' ' + comboBox1.Text; // + '|';
-  end;
+  result := ' ' + comboBox1.Text;
 end;
 
 

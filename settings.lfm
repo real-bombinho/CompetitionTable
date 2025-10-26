@@ -7,15 +7,15 @@ object Form3: TForm3
   Caption = 'Settings'
   ClientHeight = 250
   ClientWidth = 310
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '4.0.0.4'
   object Button1: TButton
     Left = 112
     Height = 24
     Top = 208
     Width = 77
     Caption = 'Save'
-    OnClick = Button1Click
     TabOrder = 0
+    OnClick = Button1Click
   end
   object Button2: TButton
     Left = 213
@@ -23,8 +23,8 @@ object Form3: TForm3
     Top = 208
     Width = 77
     Caption = 'Cancel'
-    OnClick = Button2Click
     TabOrder = 1
+    OnClick = Button2Click
   end
   object Label1: TLabel
     Left = 33

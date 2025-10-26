@@ -1,100 +1,100 @@
 object Form1: TForm1
   Left = 729
-  Height = 520
+  Height = 438
   Top = 502
-  Width = 1116
-  Caption = 'Power '
-  ClientHeight = 520
-  ClientWidth = 1116
-  DesignTimePPI = 120
+  Width = 900
+  Caption = 'Power Hour Competition'
+  ClientHeight = 438
+  ClientWidth = 900
   Menu = MainMenu1
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnResize = FormResize
   object StringGrid1: TStringGrid
-    Left = 64
-    Height = 374
-    Top = 66
-    Width = 496
+    Left = 51
+    Height = 299
+    Top = 53
+    Width = 389
     ColCount = 3
     Columns = <    
       item
-        MinSize = 12
-        MaxSize = 250
         Title.Caption = 'Name'
-        Width = 312
+        Width = 250
       end    
       item
-        MinSize = 12
-        MaxSize = 250
         Title.Caption = 'Result'
       end>
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing, goSmoothScroll]
     RowCount = 6
     ScrollBars = ssVertical
     TabOrder = 0
+    OnDrawCell = StringGrid1DrawCell
+    OnEditingDone = StringGrid1EditingDone
+    OnSelectEditor = StringGrid1SelectEditor
+    OnSetEditText = StringGrid1SetEditText
   end
-  object Edit1: TEdit
-    Left = 130
-    Height = 28
-    Top = 476
-    Width = 260
+  object EditName: TEdit
+    Left = 104
+    Height = 25
+    Top = 368
+    Width = 208
     TabOrder = 1
   end
   object Label1: TLabel
-    Left = 64
-    Height = 20
-    Top = 482
-    Width = 40
+    Left = 51
+    Height = 17
+    Top = 373
+    Width = 39
     Caption = 'Name'
     ParentColor = False
   end
-  object Edit2: TEdit
-    Left = 466
-    Height = 28
-    Top = 474
-    Width = 84
-    OnKeyPress = Edit2KeyPress
+  object EditResult: TEdit
+    Left = 381
+    Height = 25
+    Top = 368
+    Width = 67
     TabOrder = 2
+    OnKeyPress = EditResultKeyPress
   end
   object Label2: TLabel
-    Left = 410
-    Height = 20
-    Top = 482
-    Width = 40
+    Left = 328
+    Height = 17
+    Top = 373
+    Width = 41
     Caption = 'Result'
     ParentColor = False
   end
-  object Button1: TButton
-    Left = 568
-    Height = 34
-    Top = 472
-    Width = 50
+  object ButtonAdd: TButton
+    Left = 464
+    Height = 27
+    Top = 368
+    Width = 40
     Caption = 'Add'
-    OnClick = Button1Click
     TabOrder = 3
+    OnClick = ButtonAddClick
   end
   object Memo1: TMemo
-    Left = 590
-    Height = 374
-    Top = 66
-    Width = 470
+    Left = 472
+    Height = 299
+    Top = 53
+    Width = 376
     TabOrder = 4
   end
   object Label3: TLabel
-    Left = 70
-    Height = 20
-    Top = 30
-    Width = 115
+    Left = 56
+    Height = 17
+    Top = 24
+    Width = 114
     Caption = 'Participant table'
     Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
   end
   object Label4: TLabel
-    Left = 600
-    Height = 20
-    Top = 30
-    Width = 118
+    Left = 480
+    Height = 17
+    Top = 24
+    Width = 115
     Caption = 'HTML table code'
     Font.Style = [fsBold]
     ParentColor = False
@@ -103,6 +103,10 @@ object Form1: TForm1
   object MainMenu1: TMainMenu
     object MenuItem4: TMenuItem
       Caption = 'File'
+      object MenuItem8: TMenuItem
+        Caption = 'New'
+        OnClick = MenuItemNewClick
+      end
       object MenuItem7: TMenuItem
         Caption = 'Open'
         OnClick = MenuItem7Click
@@ -130,10 +134,10 @@ object Form1: TForm1
   end
   object OpenDialog1: TOpenDialog
     Filter = 'CSV|*.csv|TXT|*.txt|All|*.*'
-    Left = 100
+    Left = 80
   end
   object SaveDialog1: TSaveDialog
     Filter = 'CSV|*.csv|TXT|*.txt|All|*.*'
-    Left = 210
+    Left = 168
   end
 end

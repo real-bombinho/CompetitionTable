@@ -109,6 +109,7 @@ type
     procedure SetDataAltered(AValue: boolean);
     function ShowCentredModal(const form: TForm): integer;
     procedure displayTable;
+    procedure updateGrid;
     procedure displayHTMLtable(const zeroString: string);
     procedure displayTextTable(const zeroString: string);
     function saveFile: boolean;
@@ -204,9 +205,7 @@ begin
   if entries[index].name <> aValue then
   begin
     entries[index].name := aValue;
-
   end;
-
 end;
 
 procedure TCompetitionList.Setprecision(AValue: integer);
@@ -225,6 +224,7 @@ begin
     begin
       entries[index].value := f;
       OctopusForm.DataAltered := true;
+      sort;
     end;
   end;
 end;
@@ -390,6 +390,19 @@ begin
   end;
 end;
 
+procedure TForm1.updateGrid;
+var i: integer;
+begin
+  if CompetitionList.Count > 5 then
+    StringGrid1.RowCount := CompetitionList.Count + 1;
+  for i := 1 to CompetitionList.Count do
+  begin
+    StringGrid1.Cells[0, i] := inttostr(i)+'.';
+    StringGrid1.Cells[1, i] := CompetitionList.Name[i - 1];
+    StringGrid1.Cells[2, i] := CompetitionList.Value[i - 1];
+  end;
+end;
+
 procedure TForm1.displayHTMLtable(const zeroString: string);
 var i: integer;
 begin
@@ -472,11 +485,6 @@ begin
       readln(f, s);
       p := pos(',', s);
       CompetitionList.Add(copy(s, 1, p - 1), strtofloatDef(copy(s, p + 1, 7), NaN) );
-      if StringGrid1.RowCount < (i + 1) then
-        StringGrid1.RowCount := i + 1;
-      StringGrid1.Cells[0, i] := inttostr(i) + '.';
-      StringGrid1.Cells[1, i] := CompetitionList.Name[i - 1];
-      StringGrid1.Cells[2, i] := CompetitionList.Value[i - 1];
       inc(i);
     end;
     CloseFile(f);
@@ -485,6 +493,7 @@ begin
     on E: EInOutError do
     writeln('File handling error occurred. Details: ', E.ClassName, '/', E.Message);
   end;
+  updateGrid;
   displayTable;
 end;
 
@@ -498,6 +507,7 @@ begin
     EntryCount := strtointDef(SettingsForm.Edit1.Text,5);
     competitionList.Precision := SettingsForm.Precision;
     displayTable;
+    updateGrid;
   end;
 end;
 
@@ -508,14 +518,7 @@ begin
   f := strtofloatDef(EditResult.Text, NaN);
   if CompetitionList.Add(EditName.Text, f) then
   begin
-    if CompetitionList.Count > 5 then
-      StringGrid1.RowCount := CompetitionList.Count + 1;
-    for i := 1 to CompetitionList.Count do
-    begin
-      StringGrid1.Cells[0, i] := inttostr(i)+'.';
-      StringGrid1.Cells[1, i] := CompetitionList.Name[i - 1];
-      StringGrid1.Cells[2, i] := CompetitionList.Value[i - 1];
-    end;
+    updateGrid;
     displayTable;
     DataAltered := true;
   end;
